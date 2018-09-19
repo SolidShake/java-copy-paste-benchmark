@@ -1,0 +1,12 @@
+# Java copy-paste benchmark
+
+This benchmark tests the copying of files by several methods in different operating systems:
+- Input/OutputStream
+- FileChannel
+- Files
+
+# Build
+
+	mvn package
+	
+	java -cp target\java-copy-paste-benchmark-0.0.1-SNAPSHOT.jar com.solidshake.java_copy_paste_benchmark.Benchmark

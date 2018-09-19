@@ -15,13 +15,14 @@ import com.solidshake.java_copy_paste_benchmark.fileManager.FileManager;
 public class BenchmarkEngine {
 	
 	private long fileSize;
-	private static final String FILEPATH = new File("").getAbsolutePath();
+	private static final String FILE_PATH = new File("").getAbsolutePath();
+	private static final int MS_2_S_COEFFICIENT = 1000;
 	
 	public BenchmarkEngine(long fileSize) {
 		 this.fileSize = fileSize;
 	}
 	
-	private static String copyFileUsingStream1024(File source, File dest) throws IOException {
+	private String copyFileUsingStream1024(File source, File dest) throws IOException {
 		long startTime = System.currentTimeMillis();
 		
 	    InputStream is = null;
@@ -39,80 +40,88 @@ public class BenchmarkEngine {
 	        os.close();
 	    }
 	    
-	    double resultTime = (double)(System.currentTimeMillis() - startTime);
+	    double resultTime = (double)(System.currentTimeMillis() - startTime)/MS_2_S_COEFFICIENT;
 	    
-		return "Time to copy by Streams (1024b buffer size) is: " + resultTime/1000 + "s.\n";
+		return "Time to copy by Streams (1024b buffer size) : " + resultTime + "s.\r\n";
 	}
 	
 	@SuppressWarnings("resource")
-	private static void copyFileUsingChannel(File source, File dest) throws IOException {
+	private String copyFileUsingChannel(File source, File dest) throws IOException {
+		long startTime = System.currentTimeMillis();
+		
 	    FileChannel sourceChannel = null;
 	    FileChannel destChannel = null;
 	    try {
 	        sourceChannel = new FileInputStream(source).getChannel();
 	        destChannel = new FileOutputStream(dest).getChannel();
 	        destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
-	       }finally{
+	    }finally{
 	           sourceChannel.close();
 	           destChannel.close();
-	       }
+	    }
+	    
+	    double resultTime = (double)(System.currentTimeMillis() - startTime)/MS_2_S_COEFFICIENT;
+	    
+		return "Time to copy by File Using Channel: " + resultTime + "s.\r\n";
 	}
 	
-	private static void copyFileUsingJava7Files(File source, File dest) throws IOException {
-	    Files.copy(source.toPath(), dest.toPath());
-	}
-	
-	private void printSysInfo() {
-		String fileSizeInfo = "Test file size: " + this.fileSize/1024/1024 + " mb\n";
-		String operationSysInfo = "Operation System: " + System.getProperty("os.name");
-		String osVerInfo = "OS Version: " +  System.getProperty("os.version");
+	private String copyFileUsingJava7Files(File source, File dest) throws IOException {
+		long startTime = System.currentTimeMillis();
 		
-		System.out.print(fileSizeInfo);
-		System.out.println(operationSysInfo);
-		System.out.println(osVerInfo);
+	    Files.copy(source.toPath(), dest.toPath());
+	    
+	    double resultTime = (double)(System.currentTimeMillis() - startTime)/MS_2_S_COEFFICIENT;
+	    
+		return "Time to copy by Java 8 Files class: " + resultTime + "s.\r\n";
+	}
+	
+	private String printSysInfo() {
+		String fileSizeInfo = "Test file size: " + this.fileSize/1024/1024 + " mb" + "\r\n";
+		String operationSysInfo = "Operation System: " + System.getProperty("os.name") +"\r\n";
+		String osVerInfo = "OS Version: " +  System.getProperty("os.version") +"\r\n";
+		
+		String sysOut = fileSizeInfo + operationSysInfo + osVerInfo;
+		
+		return sysOut;
 	}
 	
 	@SuppressWarnings("resource")
-	private static void printInFile(String text) {
+	private void printInFile(String text) {
 		try {
-			FileWriter writer = new FileWriter("output.txt");
+			FileWriter writer = new FileWriter("Benchmark-results-"+ this.fileSize/Benchmark.B_2_MB_COEFFICIENT + "mb-file" + ".txt");
 			writer.append(text);
 			writer.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
 	
 	public void start() throws IOException {
-		FileManager.createTestFile(FILEPATH, "myTestFile", fileSize);
-		printSysInfo();
+		
+		FileManager.createTestFile(FILE_PATH, "TestFile", fileSize);
+		
+		String benchmarkOutput = "";
+		String sysInfo = printSysInfo();
+		benchmarkOutput += sysInfo;
 
-		File source = new File(FILEPATH + "\\" + "myTestFile");
-		File dest = new File(FILEPATH + "\\" + "myOutputTestFile");
+		File source = new File(FILE_PATH + "\\" + "TestFile");
+		File dest = new File(FILE_PATH + "\\" + "OutputTestFile");
 		
-		
-		long startTime = System.currentTimeMillis();
-		copyFileUsingStream1024(source, dest);
-		double resultTime = (double)(System.currentTimeMillis() - startTime);
-		System.out.println("Time to copy by Streams (1024b buffer size) is: " + resultTime/1000 + "s.");
+		String copyFileUsingStream1024result = copyFileUsingStream1024(source, dest);
+		benchmarkOutput += copyFileUsingStream1024result;
 		FileManager.deleteTestFile(dest);
 		
-		startTime = System.currentTimeMillis();
-		copyFileUsingChannel(source, dest);
-		resultTime = (double)(System.currentTimeMillis() - startTime);
-		System.out.println("Time to copy by File Using Channel: " + resultTime/1000 + "s.");
+		String copyFileUsingChannelresult = copyFileUsingChannel(source, dest);
+		benchmarkOutput += copyFileUsingChannelresult;
 		FileManager.deleteTestFile(dest);
-		
-		startTime = System.currentTimeMillis();
-		copyFileUsingJava7Files(source, dest);
-		resultTime = (double)(System.currentTimeMillis() - startTime);
-		System.out.println("Time to copy by Java 8 Files class: " + resultTime/1000 + "s.");
+
+		String copyFileUsingJava7Filesresult = copyFileUsingJava7Files(source, dest);
+		benchmarkOutput += copyFileUsingJava7Filesresult;
 		FileManager.deleteTestFile(dest);
 		
 		FileManager.deleteTestFile(source);
 		
-		//File result = new File("benchmarkResult.txt", "rw");	
+		printInFile(benchmarkOutput);
 	}
 }

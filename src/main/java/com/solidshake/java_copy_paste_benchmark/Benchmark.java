@@ -4,18 +4,26 @@ import java.io.IOException;
 
 public class Benchmark 
 {
-    public static void main( String[] args ) throws IOException {
+    static final long B_2_MB_COEFFICIENT = 1048576; 
+
+	public static void main( String[] args ) throws IOException {
     	
     	long fileSize;
-    	long defaultFileSize = 1024*1024*512; //512mb
+    	long defaultFileSize = B_2_MB_COEFFICIENT * 512; //512mb default file
     	
-    	if(args.length != 0) {
-    		fileSize = Integer.getInteger(args[0]);
-    	} else {
-    		fileSize = defaultFileSize;
+    	try {
+    		if(args.length != 0) {
+        		fileSize = B_2_MB_COEFFICIENT * Long.valueOf(args[0]) ;
+        		
+        	} else {
+        		fileSize = defaultFileSize;
+        	}
+        	
+            BenchmarkEngine benchmark = new BenchmarkEngine(fileSize);
+            benchmark.start();
+            
+    	} catch (NumberFormatException ex) {
+    		System.err.println("Incorrect number format");
     	}
-    	
-        BenchmarkEngine benchmark = new BenchmarkEngine(fileSize);
-        benchmark.start();
     }
 }

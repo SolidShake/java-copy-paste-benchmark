@@ -1,8 +1,6 @@
 package com.solidshake.java_copy_paste_benchmark.fileManager;
 
 import java.io.*;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 
 public class FileManager {
 		
