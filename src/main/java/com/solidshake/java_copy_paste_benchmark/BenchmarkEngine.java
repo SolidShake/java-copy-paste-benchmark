@@ -76,7 +76,7 @@ public class BenchmarkEngine {
 	}
 	
 	private String printSysInfo() {
-		String fileSizeInfo = "Test file size: " + this.fileSize/1024/1024 + " mb" + "\r\n";
+		String fileSizeInfo = "Test file size: " + this.fileSize/Benchmark.B_2_MB_COEFFICIENT + " mb" + "\r\n";
 		String operationSysInfo = "Operation System: " + System.getProperty("os.name") +"\r\n";
 		String osVerInfo = "OS Version: " +  System.getProperty("os.version") +"\r\n";
 		
