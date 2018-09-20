@@ -6,16 +6,18 @@ import com.solidshake.java_copy_paste_benchmark.Benchmark;
 
 public class FileManager {
 		
-	@SuppressWarnings("resource")
 	public static File createTestFile(String path, String fileName, long fileSize) throws IOException {
 		File testFile = new File(path + "\\" + fileName);
 		RandomAccessFile randomTestFile = new RandomAccessFile(testFile, "rw");
-		
-		if(testFile.getUsableSpace() < fileSize * 2 || fileSize < 0) {
+
+		if(testFile.getUsableSpace()/2 < fileSize || fileSize <= 0.0) {
+			randomTestFile.close();
+			deleteTestFile(testFile);
+
 			throw new IllegalArgumentException("Incorrect file size");
-		} else {
-			randomTestFile.setLength(fileSize);	
-		}
+		} 	
+		
+		randomTestFile.setLength(fileSize);	
 		randomTestFile.close();
 		
 		return testFile;

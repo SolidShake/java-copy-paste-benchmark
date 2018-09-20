@@ -18,7 +18,7 @@ public class BenchmarkEngine {
 	private static final int MS_2_S_COEFFICIENT = 1000;
 	
 	public BenchmarkEngine(long fileSize) {
-		 this.fileSize = fileSize;
+		this.fileSize = fileSize;
 	}
 	
 	private String copyFileUsingStream1024(File source, File dest) throws IOException {
@@ -54,7 +54,7 @@ public class BenchmarkEngine {
 	        sourceChannel = new FileInputStream(source).getChannel();
 	        destChannel = new FileOutputStream(dest).getChannel();
 	        destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
-	    }finally{
+	    } finally {
 	           sourceChannel.close();
 	           destChannel.close();
 	    }
@@ -79,9 +79,9 @@ public class BenchmarkEngine {
 		try {
 			FileManager.createTestFile(FILE_PATH, "TestFile", fileSize);
 		} catch (IllegalArgumentException ex) {
-			String sizeErr = "Not enough disk space or less than 0mb file \r\n";
+			String sizeErr = "Not enough disk space or less than or equal to 0mb file \r\n";
 			FileManager.printInFile(sizeErr, fileSize);
-			
+	
 			System.exit(1);
 		}
 		
