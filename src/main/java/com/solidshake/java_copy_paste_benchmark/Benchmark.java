@@ -16,7 +16,7 @@ public class Benchmark
     			if (Long.valueOf(args[0]) > Long.MAX_VALUE || Long.valueOf(args[0]) < Long.MIN_VALUE) {
     				throw new NumberFormatException();
     			} else {
-            		fileSize = B_2_MB_COEFFICIENT * Long.valueOf(args[0]) ;
+    				fileSize = B_2_MB_COEFFICIENT * Long.valueOf(args[0]);
     			}
         		
         	} else {
