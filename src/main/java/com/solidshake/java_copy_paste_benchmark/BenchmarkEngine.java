@@ -3,7 +3,6 @@ package com.solidshake.java_copy_paste_benchmark;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -75,34 +74,19 @@ public class BenchmarkEngine {
 		return "Time to copy by Java 8 Files class: " + resultTime + "s.\r\n";
 	}
 	
-	private String printSysInfo() {
-		String fileSizeInfo = "Test file size: " + this.fileSize/Benchmark.B_2_MB_COEFFICIENT + " mb" + "\r\n";
-		String operationSysInfo = "Operation System: " + System.getProperty("os.name") +"\r\n";
-		String osVerInfo = "OS Version: " +  System.getProperty("os.version") +"\r\n";
-		
-		String sysOut = fileSizeInfo + operationSysInfo + osVerInfo;
-		
-		return sysOut;
-	}
-	
-	@SuppressWarnings("resource")
-	private void printInFile(String text) {
-		try {
-			FileWriter writer = new FileWriter("Benchmark-results-"+ this.fileSize/Benchmark.B_2_MB_COEFFICIENT + "mb-file" + ".txt");
-			writer.append(text);
-			writer.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
 	public void start() throws IOException {
 		
-		FileManager.createTestFile(FILE_PATH, "TestFile", fileSize);
+		try {
+			FileManager.createTestFile(FILE_PATH, "TestFile", fileSize);
+		} catch (IllegalArgumentException ex) {
+			String sizeErr = "Not enough disk space or less than 0mb file \r\n";
+			FileManager.printInFile(sizeErr, fileSize);
+			
+			System.exit(1);
+		}
 		
 		String benchmarkOutput = "";
-		String sysInfo = printSysInfo();
+		String sysInfo = FileManager.printSysInfo(fileSize);
 		benchmarkOutput += sysInfo;
 
 		File source = new File(FILE_PATH + "\\" + "TestFile");
@@ -122,6 +106,6 @@ public class BenchmarkEngine {
 		
 		FileManager.deleteTestFile(source);
 		
-		printInFile(benchmarkOutput);
+		FileManager.printInFile(benchmarkOutput, fileSize);
 	}
 }

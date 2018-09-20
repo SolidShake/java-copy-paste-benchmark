@@ -2,12 +2,20 @@ package com.solidshake.java_copy_paste_benchmark.fileManager;
 
 import java.io.*;
 
+import com.solidshake.java_copy_paste_benchmark.Benchmark;
+
 public class FileManager {
 		
+	@SuppressWarnings("resource")
 	public static File createTestFile(String path, String fileName, long fileSize) throws IOException {
 		File testFile = new File(path + "\\" + fileName);
 		RandomAccessFile randomTestFile = new RandomAccessFile(testFile, "rw");
-		randomTestFile.setLength(fileSize);
+		
+		if(testFile.getUsableSpace() < fileSize * 2 || fileSize < 0) {
+			throw new IllegalArgumentException("Incorrect file size");
+		} else {
+			randomTestFile.setLength(fileSize);	
+		}
 		randomTestFile.close();
 		
 		return testFile;
@@ -15,5 +23,27 @@ public class FileManager {
 	
 	public static boolean deleteTestFile(File fileName) {
 		return fileName.delete();
+	}
+	
+	public static String printSysInfo(long testFileSize) {
+		String fileSizeInfo = "Test file size: " + testFileSize/Benchmark.B_2_MB_COEFFICIENT + " mb" + "\r\n";
+		String operationSysInfo = "Operation System: " + System.getProperty("os.name") + "\r\n";
+		String osVerInfo = "OS Version: " +  System.getProperty("os.version") +"\r\n";
+		
+		String sysOut = fileSizeInfo + operationSysInfo + osVerInfo;
+		
+		return sysOut;
+	}
+	
+	@SuppressWarnings("resource")
+	public static void printInFile(String text, long testFileSize) {
+		try {
+			FileWriter writer = new FileWriter("Benchmark-results-"+ testFileSize/Benchmark.B_2_MB_COEFFICIENT + "mb-file" + ".txt");
+			writer.append(text);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 }

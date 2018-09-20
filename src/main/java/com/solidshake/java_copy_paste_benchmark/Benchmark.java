@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Benchmark 
 {
-    static final long B_2_MB_COEFFICIENT = 1048576; 
+	public static final long B_2_MB_COEFFICIENT = 1048576; 
 
 	public static void main( String[] args ) throws IOException {
     	
